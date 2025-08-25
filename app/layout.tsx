@@ -1,4 +1,4 @@
-import './globals.css'
+import '@/src/styles/globals.css'
 import Nav from '@/src/components/Nav'
 import type { Metadata } from 'next'
 
