@@ -21,3 +21,6 @@ export default function Page() {
     </div>
   )
 }
+
+import { supabaseAdmin } from '@/src/lib/supabaseServer'
+
