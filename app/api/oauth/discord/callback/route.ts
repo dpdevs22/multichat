@@ -34,6 +34,11 @@ export async function GET(req: NextRequest) {
   const access_token = token.access_token
   const refresh_token = token.refresh_token
 
+  export async function GET(req: Request) {
+  const url = new URL(req.url)
+  const platform = url.searchParams.get('platform') as 'discord' | 'twitch' | 'youtube' | 'tiktok' | null
+  if (!platform) throw new Error('Platform not specified')
+
   // User info
   let external_user_id = ''
   let username = ''
