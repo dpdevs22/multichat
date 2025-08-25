@@ -11,11 +11,9 @@ import { createClient } from '@supabase/supabase-js'
 export const supabaseServer = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
-
-import { createAdmin } from '@supabase/supabase-js')
-
-export const supabaseAdmin = createAdmin(
+export const supabaseAdmin = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )

@@ -1,6 +1,6 @@
 import { supabaseAdmin } from '@/src/lib/supabaseServer'
 export default async function CreatorsPage() {
-  const sb = supabaseAdmin()
+  const sb = supabaseAdmin
   const { data } = await sb.from('profiles_with_stats').select('*').limit(100)
   return (
     <div className="space-y-4 mt-4">
