@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
   // User info
   let external_user_id = ''
   let username = ''
-  if ('discord' === 'twitch') {
+  if (platform === 'twitch') {
     const u = await fetch('https://api.twitch.tv/helix/users', {
       headers: { 'Authorization': `Bearer ${access_token}`, 'Client-Id': process.env.TWITCH_CLIENT_ID! }
     })
@@ -45,21 +45,21 @@ export async function GET(req: NextRequest) {
     const me = j.data?.[0]
     external_user_id = me?.id || ''
     username = me?.display_name || me?.login || ''
-  } else if ('discord' === 'youtube') {
+  } else if (platform === 'youtube') {
     const u = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
       headers: { 'Authorization': `Bearer ${access_token}` }
     })
     const me = await u.json()
     external_user_id = me?.sub || ''
     username = me?.name || me?.email || ''
-  } else if ('discord' === 'discord') {
+  } else if (platform === 'discord') {
     const u = await fetch('https://discord.com/api/users/@me', {
       headers: { 'Authorization': `Bearer ${access_token}` }
     })
     const me = await u.json()
     external_user_id = me?.id || ''
     username = me?.username || ''
-  } else if ('discord' === 'tiktok') {
+  } else if (platform === 'tiktok') {
     const u = await fetch('https://open.tiktokapis.com/v2/user/info/', {
       method: 'GET',
       headers: { 'Authorization': `Bearer ${access_token}` }
