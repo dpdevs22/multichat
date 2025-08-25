@@ -1,6 +1,6 @@
 import { supabaseAdmin } from '@/src/lib/supabaseServer'
 export default async function AnalyticsPage() {
-  const sb = supabaseAdmin()
+  const sb = supabaseAdmin
   const { data: rows } = await sb.rpc('system_analytics_overview')
   return (
     <div className="space-y-4 mt-4">

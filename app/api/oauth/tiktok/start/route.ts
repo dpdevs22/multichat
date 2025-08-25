@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   const redirect = redirectUri(origin, 'tiktok')
   const state = randomState()
   // Save state
-  const sb = supabaseAdmin()
+  const sb = supabaseAdmin
   const { error } = await sb.from('oauth_states').insert({ state, user_id: uid, platform: 'tiktok' })
   if (error) return new Response(error.message, { status: 500 })
 

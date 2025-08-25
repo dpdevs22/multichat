@@ -21,7 +21,7 @@ export type NormalizedEvent = {
 }
 
 export async function insertChat(c: NormalizedChat) {
-  const sb = supabaseAdmin()
+  const sb = supabaseAdmin
   return sb.from('chat_messages').insert({
     user_id: c.user_id,
     platform: c.platform,
@@ -34,7 +34,7 @@ export async function insertChat(c: NormalizedChat) {
 }
 
 export async function insertEvent(e: NormalizedEvent) {
-  const sb = supabaseAdmin()
+  const sb = supabaseAdmin
   return sb.from('platform_events').insert({
     user_id: e.user_id,
     platform: e.platform,

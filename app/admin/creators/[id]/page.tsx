@@ -1,6 +1,6 @@
 import { supabaseAdmin } from '@/src/lib/supabaseServer'
 export default async function CreatorDetail({ params }: { params: { id: string }}) {
-  const sb = supabaseAdmin()
+  const sb = supabaseAdmin
   const [{ data: profile }, { data: links }, { data: stats }] = await Promise.all([
     sb.from('profiles').select('*').eq('id', params.id).single(),
     sb.from('linked_accounts').select('*').eq('user_id', params.id),

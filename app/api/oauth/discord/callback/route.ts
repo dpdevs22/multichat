@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
   const state = url.searchParams.get('state')
   if (!code || !state) return new Response('Missing code/state', { status: 400 })
 
-  const sb = supabaseAdmin()
+  const sb = supabaseAdmin
   const { data: states, error: stErr } = await sb.from('oauth_states').select('*').eq('state', state).eq('platform','discord').limit(1)
   if (stErr || !states || states.length===0) return new Response('Invalid state', { status: 400 })
   const user_id = states[0].user_id
