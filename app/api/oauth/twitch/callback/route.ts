@@ -9,8 +9,14 @@ export async function GET(req: NextRequest) {
   if (!code || !state) return new Response('Missing code/state', { status: 400 })
 
   const sb = supabaseAdmin
-  const { data: states, error: stErr } = await sb.from('oauth_states').select('*').eq('state', state).eq('platform','twitch').limit(1)
-  if (stErr || !states || states.length===0) return new Response('Invalid state', { status: 400 })
+  const { data: states, error: stErr } = await sb
+    .from('oauth_states')
+    .select('*')
+    .eq('state', state)
+    .eq('platform', 'twitch')
+    .limit(1)
+
+  if (stErr || !states || states.length === 0) return new Response('Invalid state', { status: 400 })
   const user_id = states[0].user_id
 
   const origin = originFromHeaders(req.headers)
@@ -24,55 +30,31 @@ export async function GET(req: NextRequest) {
   body.set('grant_type', 'authorization_code')
   body.set('redirect_uri', redirect)
 
-  const tokenRes = await fetch(`https://id.twitch.tv/oauth2/token`, {
+  const tokenRes = await fetch('https://id.twitch.tv/oauth2/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body
   })
   if (!tokenRes.ok) return new Response('Token exchange failed', { status: 500 })
-  const token = await tokenRes.json() as any
+  const token = (await tokenRes.json()) as any
   const access_token = token.access_token
   const refresh_token = token.refresh_token
 
-  // User info
-  let external_user_id = ''
-  let username = ''
-  if ('twitch' === 'twitch') {
-    const u = await fetch('https://api.twitch.tv/helix/users', {
-      headers: { 'Authorization': `Bearer ${access_token}`, 'Client-Id': process.env.TWITCH_CLIENT_ID! }
-    })
-    const j = await u.json()
-    const me = j.data?.[0]
-    external_user_id = me?.id || ''
-    username = me?.display_name || me?.login || ''
-  } else if ('twitch' === 'youtube') {
-    const u = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-      headers: { 'Authorization': `Bearer ${access_token}` }
-    })
-    const me = await u.json()
-    external_user_id = me?.sub || ''
-    username = me?.name || me?.email || ''
-  } else if ('twitch' === 'discord') {
-    const u = await fetch('https://discord.com/api/users/@me', {
-      headers: { 'Authorization': `Bearer ${access_token}` }
-    })
-    const me = await u.json()
-    external_user_id = me?.id || ''
-    username = me?.username || ''
-  } else if ('twitch' === 'tiktok') {
-    const u = await fetch('https://open.tiktokapis.com/v2/user/info/', {
-      method: 'GET',
-      headers: { 'Authorization': `Bearer ${access_token}` }
-    })
-    const j = await u.json() as any
-    const me = j?.data?.user || j?.data
-    external_user_id = me?.open_id || ''
-    username = me?.display_name || me?.username || ''
-  }
+  // Twitch user info
+  const userRes = await fetch('https://api.twitch.tv/helix/users', {
+    headers: { Authorization: `Bearer ${access_token}`, 'Client-Id': process.env.TWITCH_CLIENT_ID! }
+  })
+  if (!userRes.ok) return new Response('Failed to fetch user info', { status: 500 })
+  const userData = (await userRes.json()) as any
+  const me = userData?.data?.[0] || {}
+  const external_user_id = me?.id || ''
+  const username = me?.display_name || me?.login || ''
 
-  const { error: upErr } = await sb.from('linked_accounts').upsert({
-    user_id, platform: 'twitch', external_user_id, access_token, refresh_token, username
-  }, { onConflict: 'user_id,platform' } as any)
+  // Upsert linked account
+  const { error: upErr } = await sb.from('linked_accounts').upsert(
+    { user_id, platform: 'twitch', external_user_id, access_token, refresh_token, username },
+    { onConflict: 'user_id,platform' } as any
+  )
   if (upErr) return new Response(upErr.message, { status: 500 })
 
   await sb.from('oauth_states').delete().eq('state', state)
