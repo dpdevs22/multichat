@@ -1,0 +1,7 @@
+{
+  "instructions": [
+    "Pin @stripe/stripe-js to 2.8.0 (no caret) in package.json",
+    "Optionally add overrides: { \"overrides\": { \"@stripe/stripe-js\": \"2.8.0\" } }",
+    "Ensure engines.node is \">=18.18 <21\""
+  ]
+}

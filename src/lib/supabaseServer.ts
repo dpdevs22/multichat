@@ -1,19 +1,16 @@
-// import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
-// export function supabaseAdmin() {
-//   const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
-//   const key = process.env.SUPABASE_SERVICE_ROLE!
-//   return createClient(url, key, { auth: { persistSession: false } })
-// }
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const serviceKey = process.env.SUPABASE_SERVICE_ROLE || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-import { createClient } from '@supabase/supabase-js'
+if (!url || !serviceKey) {
+  console.warn('[supabaseServer] Missing Supabase env vars')
+}
 
-export const supabaseServer = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+export const supabaseAdmin: SupabaseClient = createClient(url, serviceKey, {
+  auth: { persistSession: false, autoRefreshToken: false }
+})
 
-export const supabaseAdmin = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+export function getSupabaseAdmin(): SupabaseClient {
+  return supabaseAdmin
+}

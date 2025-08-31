@@ -1,11 +1,9 @@
-export function originFromHeaders(headers: Headers) {
-  return headers.get('x-forwarded-proto') && headers.get('x-forwarded-host')
-    ? `${headers.get('x-forwarded-proto')}://${headers.get('x-forwarded-host')}`
-    : headers.get('origin') || process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'
+export function originFromHeaders(h: Headers): string {
+  const host = h.get('x-forwarded-host') || h.get('host') || ''
+  const proto = (h.get('x-forwarded-proto') || 'https').split(',')[0]
+  return `${proto}://${host}`
 }
-export function redirectUri(origin: string, platform: string) {
+
+export function redirectUri(origin: string, platform: 'twitch'|'youtube'|'discord'|'tiktok') {
   return `${origin}/api/oauth/${platform}/callback`
-}
-export function randomState() {
-  return Array.from(crypto.getRandomValues(new Uint32Array(4))).map(n=>n.toString(16)).join('')
 }
