@@ -6,7 +6,7 @@ This starter includes:
 - Stripe checkout/portal/webhook (basic)
 - OAuth for Twitch, YouTube (Google), Discord, TikTok Login (start+callback implemented)
 - Supabase SQL schema + RLS (`supabase/schema.sql`)
-- TikTok worker for live chat/gifts/joiners
+- TikTok worker for live chat/gifts
 
 ## Setup
 1) Create Supabase project and run `supabase/schema.sql` in the SQL editor.
