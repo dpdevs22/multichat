@@ -10,8 +10,6 @@
       "path": "/api/cron/refresh",
       "schedule": "0 */2 * * *"
     }
-  ]
-},
-{
-  "ignoreCommand": "echo 'skip supabase/functions'"
+  ],
+  "ignoreCommand": "echo \"skip supabase/functions\""
 }
